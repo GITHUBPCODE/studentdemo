@@ -2,8 +2,8 @@
 <html>
 <head>
     <title>student details</title>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
 </head>
 <body>
    
@@ -29,7 +29,7 @@
                 @csrf
                 <input type="file" name="file" class="form-control">
                 <br>
-                <button class="btn btn-success" type="submit">Import Student Data</button>
+                <button class="btn btn-success">Import Student Data</button>
                 <a class="btn btn-warning" href="{{ 'template/StudentDetailTemplate.xlsx' }}">Download Template</a>
             </form>
         </div>

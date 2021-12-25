@@ -11,7 +11,7 @@ use App\Imports\StudentImport;
 use App\Imports\StudentmarkImport;
 use DataTables;
 use DB;
-
+use Illuminate\Support\Facades\Validator;
 class HomeController extends Controller
 {
     //
@@ -23,12 +23,13 @@ class HomeController extends Controller
     }	
 	public function importstudent(Request $request) 
     {
-        Excel::import(new StudentImport,request()->file('file'));
-        return back()->with('msg','Student Details added !');
+        $getdatta = Excel::import(new StudentImport,request()->file('file'));
+		return back()->with('msg','Student Details added !');
     }
 	public function importmark(Request $request) 
     {
-        Excel::import(new StudentmarkImport,request()->file('file'));
+        $getdatta = Excel::import(new StudentmarkImport,request()->file('file'));
+		
         return back()->with('msg','Student Mark Details added !');
     }	
 	
@@ -37,19 +38,21 @@ class HomeController extends Controller
         
 		
 		if ($request->ajax()) {
-            $data = DB::select('	SELECT T1.id
+            $data = DB::select('	SELECT X.*
+									,CASE 	WHEN X.TOTAL THEN "ABSEND"
+											WHEN X.TOTAL <100 THEN  "FAIL"
+											WHEN X.TOTAL >=100 THEN "GOOD"
+											ELSE "NA" END AS GRADE
+									FROM
+									(SELECT T1.id
 											, T1.student_id
 											, T1.name
 											,T1.address
-											,ifnull(T2.class,"NA")  as CLASS
-											,IFNULL(SUM(T2.marks),0) AS TOTAL
-											,CASE 	WHEN IFNULL(SUM(T2.marks),0) =0 THEN "ABSEND"
-													WHEN IFNULL(SUM(T2.marks),0) <100 THEN  "FAIL"
-													WHEN IFNULL(SUM(T2.marks),0) >=100 THEN "GOOD"
-													ELSE "NA" END AS GRADE
+											,ifnull(T1.classname,"NA")  as CLASS
+											,ifnull((SELECT SUM(T2.marks) FROM studentmarks T2 WHERE T2.studentid=T1.student_id),0) AS TOTAL
+											
 									FROM studentdetails T1
-									LEFT JOIN studentmarks T2 ON T2.studentid=T1.student_id
-									GROUP BY T2.studentid, T2.class ');
+                                    )X ') ;
             //$data = studentdetails::select('*')->get();
 			//return $data;
             return Datatables::of($data)->addIndexColumn()
@@ -61,7 +64,7 @@ class HomeController extends Controller
                 ->make(true);
         }
 		
-		$ClassList = DB::select('SELECT ifnull(class,"NA") AS CLASS FROM studentmarks GROUP BY class ');
+		$ClassList = DB::select('SELECT ifnull(classname,"NA") AS CLASS FROM studentdetails GROUP BY class ');
 		return view('report',compact('ClassList'));
     }
 	function showmark($studentid,$classname){
@@ -74,14 +77,56 @@ class HomeController extends Controller
 	
 	function viewchart(){
 		
-				$data = DB::select(' SELECT class as store_name,
-												subject as Time,
+				$data = DB::select(' SELECT class as Time,
+												subject as store_name,
 										   avg(marks) AS count
 									FROM studentmarks
 									GROUP BY class,subject DESC ');	
 				//$data = json_encode($dataget , JSON_NUMERIC_CHECK);
-				return $data;
+				//return $data;
 				return view('chart',compact('data'));
+	}
+	function ajaxsubmit(Request $request){
+		//return $request;
+		
+		 foreach($request->student_id as $key =>$student_id){
+            $data = array(
+                            'student_id'=>$request->student_id[$key],
+                            'name'=>$request->name[$key],
+                            'classname'=>$request->classname[$key],
+                            'address'=>$request->address[$key],
+                            'dob'=>$request->dob[$key],
+                );
+				
+         Validator::make($data, [
+             'student_id' => 'unique:App\Models\studentdetails,student_id|required',
+             'name' => 'required',
+             'classname' => 'required',
+             'address' => 'required',
+		 'dob' => 'required|date',
+         ])->validate();
+		 studentdetails::insert($data);
+
+			/*
+			$chk = DB::select('select count(0) as SCOUNT from studentdetails where student_id='.$request->student_id[$key].'');
+			if(($request->student_id[$key]=='' || $request->student_id[$key]==null || $request->student_id[$key]=='null')){
+				return 'Check Excel Data !  Student id empty';
+			}else if(($chk[0]->SCOUNT==0)){
+				studentdetails::insert($data);
+				return 'Student Details added !';
+			}else if(($chk[0]->SCOUNT>0)){
+				return 'Check Excel Data ! student id dublicate';
+			} else if(($request->name[$key]=='' || $request->name[$key]==null || $request->name[$key]=='null')){
+				return 'Check Excel Data ! name empty';
+			} else if(($request->classname[$key]=='' || $request->classname[$key]==null || $request->classname[$key]=='null')){
+				return 'Check Excel Data ! classname empty';
+			}else{
+				return 'Check Excel Data ! ';
+			}
+			*/
+			
+        }
+		
 	}
 	
 }

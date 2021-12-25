@@ -17,11 +17,14 @@ use App\Http\Controllers\HomeController;
 Route::get('/', function () {
     return view('welcome');
 });
-
+Route::get('/ajax', function () {
+    return view('ajax');
+});
 
 Route::get('/upload', [HomeController::class, 'upload']);
 Route::post('/importstudent', [HomeController::class, 'importstudent'])->name('importstudent');
 Route::post('/importmark', [HomeController::class, 'importmark'])->name('importmark');
+Route::post('/ajaxsubmit', [HomeController::class, 'ajaxsubmit'])->name('ajaxsubmit');
 Route::get('/viewreport', [HomeController::class, 'viewreport'])->name('viewreport');
 Route::get('/viewchart', [HomeController::class, 'viewchart'])->name('viewchart');
 Route::get('/showmark/{studentid}/{classname}', [HomeController::class, 'showmark'])->name('showmark');

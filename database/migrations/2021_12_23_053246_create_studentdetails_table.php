@@ -17,9 +17,11 @@ class CreateStudentdetailsTable extends Migration
             $table->id();
             $table->integer('student_id')->unique();
             $table->string('name');
+            $table->string('classname');
             $table->text('address');
             $table->date('dob');
             $table->timestamps();
+			
         });
     }
 

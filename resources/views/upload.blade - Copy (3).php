@@ -25,7 +25,8 @@
 			&nbsp;&nbsp;&nbsp;<a href="{{url('viewchart')}}"><button class="btn btn-warning" >View Chart</button></a>
         </div>
         <div class="card-body">
-            <form action="{{ route('importstudent') }}" method="POST" enctype="multipart/form-data">
+            <form  method="POST" enctype="multipart/form-data" id="studentform">
+            <!--<form action="{{ route('importstudent') }}" method="POST" enctype="multipart/form-data">-->
                 @csrf
                 <input type="file" name="file" class="form-control">
                 <br>
@@ -52,5 +53,77 @@
     </div>
 </div>   
 </body>
+
+
+<script>
+/*
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+*/
+   $('#studentform').submit(function(e) {
+       e.preventDefault();
+	   var fmdat = $('#studentform').serialize();
+       let formData = new FormData($(fmdat)[1]);
+       //let formData = new FormData(this);
+       $('#image-input-error').text('');
+
+       $.ajax({
+          type:'POST',
+          url: "{{ url('importstudent')}}",
+           data: formData,
+           contentType: false,
+           processData: false,
+		   
+           success: (response) => {
+             if (response) {
+               this.reset();
+               alert('Image has been uploaded successfully');
+             }
+           },
+           error: function(response){
+              console.log(response);
+                $('#image-input-error').text(response.responseJSON.errors.file);
+           }
+       });
+  });
+
+</script>
+<!---
+<script type="text/javascript">
+$(document).ready(function (e) {
+$.ajaxSetup({
+headers: {
+'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+}
+});
+$('#studentform').submit(function(e) {
+e.preventDefault();
+var formData = new FormData(this);
+$.ajax({
+type:'POST',
+url: "{{ url('importstudent')}}",
+data: formData,
+cache:false,
+contentType: false,
+processData: false,
+success: (data) => {
+this.reset();
+alert('File has been uploaded successfully');
+console.log(data);
+},
+error: function(data){
+console.log(data);
+}
+});
+});
+});
+</script>
+
+
+-->
+
 
 </html>

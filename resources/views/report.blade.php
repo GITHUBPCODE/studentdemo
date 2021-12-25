@@ -30,7 +30,7 @@
     <div class="row">
         <div class="col-12 table-responsive">
 		
-			<select name="class" id="class" CLASS="form-control">
+			<select name="class" id="class" CLASS="form-control" style="backround-color:red;background-color: #84b5ff;">
 			<option value="">ALL</option>
 			@foreach($ClassList as $ClassLists)
 			<option value="{{ $ClassLists->CLASS }}">{{ $ClassLists->CLASS }}</option>

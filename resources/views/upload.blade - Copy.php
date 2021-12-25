@@ -1,9 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>student details</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" />
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<title>Student</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" />
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+
 </head>
 <body>
    
@@ -33,7 +40,6 @@
                 </div>
                 </div>
                 @endif
-
   
 <div class="container">
     <div class="card bg-light mt-3">
@@ -43,11 +49,13 @@
 			&nbsp;&nbsp;&nbsp;<a href="{{url('viewchart')}}"><button class="btn btn-warning" >View Chart</button></a>
         </div>
         <div class="card-body">
-            <form action="{{ route('importstudent') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <input type="file" name="file" class="form-control">
+            <!--<form action="{{ route('importstudent') }}" method="POST" enctype="multipart/form-data">-->
+            <form method="POST" enctype="multipart/form-data" id="studentform"  class="studentform">
+@method('POST')
+
+                <input type="file" name="file" id="file" class="form-control">
                 <br>
-                <button class="btn btn-success">Import Student Data</button>
+                <button type="button" class="btn btn-success" id="upstudent">Import Student Data</button>
                 <a class="btn btn-warning" href="{{ 'template/StudentDetailTemplate.xlsx' }}">Download Template</a>
             </form>
         </div>
@@ -68,7 +76,41 @@
             </form>
         </div>
     </div>
-</div>   
-</body>
+</div> 
 
+
+<script type="text/javascript">
+ $("#upstudent").click(function(){
+
+$.ajaxSetup({
+headers: {
+'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+}
+});
+//$('#upstudent').on(function(e) {
+var form_data = $('#studentform').serialize();
+
+var formData = new FormData(form_data);
+$.ajax({
+type:'POST',
+url: "{{ url('importstudent')}}",
+data: formData,
+cache:false,
+contentType: false,
+processData: false,
+success: (data) => {
+this.reset();
+alert('File has been uploaded successfully');
+console.log(data);
+},
+error: function(data){
+console.log(data);
+}
+});
+});
+
+</script>
+
+  
+</body>
 </html>

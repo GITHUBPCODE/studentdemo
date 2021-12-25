@@ -15,8 +15,9 @@ class CreateStudentmarksTable extends Migration
     {
         Schema::create('studentmarks', function (Blueprint $table) {
             $table->id();
-            $table->BigInteger('studentid')->unsigned();
+            $table->integer('studentid')->unsigned();
             //$table->foreign('studentid')->references('studentid')->on('studentdetails');
+            $table->string('class');
             $table->string('subject');
             $table->integer('marks');
             $table->timestamps();

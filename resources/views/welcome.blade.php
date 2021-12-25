@@ -41,6 +41,7 @@
                     &nbsp;&nbsp;&nbsp;<a href="{{url('upload')}}"><button class="btn btn-success" width="">Upload Details</button></a>
                     &nbsp;&nbsp;&nbsp;<a href="{{url('viewreport')}}"><button class="btn btn-warning" width="">View Details</button></a>
                     &nbsp;&nbsp;&nbsp;<a href="{{url('viewchart')}}"><button class="btn btn-danger" width="">View Chart</button></a>
+                    &nbsp;&nbsp;&nbsp;<a href="{{url('ajax')}}"><button class="btn btn-secondary" width="">Upload Student using ajax</button></a>
                 </div>
 
                 <div class="mt-8 bg-white dark:bg-gray-800 overflow-hidden shadow sm:rounded-lg">

@@ -10,7 +10,7 @@ class studentdetails extends Model
     use HasFactory;
 	
 	protected $table='studentdetails';
-	protected $fillable =['GROUP_ID', 'GROUP_NAME', 'PARENT_GROUP', 'ACTIVE'];
+	protected $fillable =['student_id', 'name', 'address', 'dob'];
 	
 	
 	
